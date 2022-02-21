@@ -55,3 +55,5 @@ public class Server {
 		}).start();
 	}
 }
+//Very simple chat room，Meet the client.java use
+//Thanks to watching
