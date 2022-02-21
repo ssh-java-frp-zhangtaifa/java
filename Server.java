@@ -11,8 +11,8 @@ public class Server {
 		ServerSocket server = new ServerSocket(10000);
 		
 		while (true) {
-			Socket socket = server.accept();
-			invoke(socket);
+			Socket socket = server.accept();//Listening
+			invoke(socket);//If someone connects, create a new thread invoke to handle
 			
 		}
 
@@ -28,16 +28,17 @@ public class Server {
 					out = new PrintWriter(client.getOutputStream());
 					
 					while (true) {
-						String msg = in.readLine();
-						if (!msg.equals(null)) {
-							System.out.println(msg);
+						String msg = in.readLine();//Gets the string
+						InetAddress r = client.getInetAddress();
+						if (!msg.equals(null)) {//Check whether it is empty, and if it is empty, an error will be reported
+							System.out.println(msg+" come from "+r);
 						if (msg.equals("bye")) {
 							break;
 						}
 						} else {							
 						}
 					}
-				} catch(IOException ex) {
+				} catch(IOException ex) {//
 					ex.printStackTrace();
 				} finally {
 					try {
