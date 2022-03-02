@@ -1,10 +1,12 @@
 package javasocket;
-import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.*;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.Reader;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.*;
  
 public class Server {
 	public static void main(String[] args) throws IOException,Exception {
@@ -28,13 +30,32 @@ public class Server {
 					out = new PrintWriter(client.getOutputStream());
 					
 					while (true) {
+						int throwsd = 1;
+						throwsd ++;
 						String msg = in.readLine();//Gets the string
 						InetAddress r = client.getInetAddress();
 						if (!msg.equals(null)) {//Check whether it is empty, and if it is empty, an error will be reported
-							System.out.println(msg+" come from "+r);
-						if (msg.equals("bye")) {
-							break;
-						}
+							System.out.println(msg+" from "+r);
+							try {
+								Class.forName("com.mysql.cj.jdbc.Driver");//Upload the information to the database
+								Connection con = DriverManager.getConnection(
+								"jdbc:mysql://localhost:3306/java", "root", "java");
+								Statement stmt = con.createStatement();
+								stmt.execute("SET SESSION sql_mode=NO_ZERO_IN_DATE;");
+								String tString = new String("insert into `java1` (`ip`,`msg`) values (");
+								StringBuffer stringBuffer = new StringBuffer(tString);
+								stringBuffer.append("'");
+								stringBuffer.append(r);
+								stringBuffer.append("'");
+								stringBuffer.append(",'");
+								stringBuffer.append(msg);
+								stringBuffer.append("');");
+								String dstString = new String(stringBuffer);
+								stmt.execute(dstString);
+								//System.out.println(rString);
+								//TODO
+							} catch (Exception e) {
+							}
 						} else {							
 						}
 					}
