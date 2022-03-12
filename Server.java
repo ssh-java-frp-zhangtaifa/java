@@ -1,25 +1,53 @@
 package javasocket;
 import java.io.*;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 import java.sql.*;
- 
+import java.util.Scanner;
 public class Server {
 	public static void main(String[] args) throws IOException,Exception {
-		ServerSocket server = new ServerSocket(10000);
+		System.out.println("user");
+			Scanner sc = new Scanner(System.in);//Login
+			String iString = sc.nextLine();
+			System.out.println("password");
+			Scanner userpass1 = new Scanner(System.in);
+                String userpass = userpass1.nextLine();
+			System.out.println("ipv6");//Get your own ipv6
+			try (Scanner dScanner = new Scanner(System.in)) {
+				String dString = dScanner.nextLine(); 
+				String psd = "java";//
+				String Url = "jdbc:mysql://localhost/java";
+				String jdbcName= "com.mysql.cj.jdbc.Driver";
+				String h = "UPDATE javac SET ip='"+dString+"' where user like '%"+iString+"%';";//Update your own IP address in the database
+				Class.forName(jdbcName);
+				Connection conn=DriverManager.getConnection(Url,"root",psd);//Connect to database
+				Statement stmt = conn.createStatement();
+            String sql1 = "select * from javac where pass like '%"+userpass+"%';";
+            ResultSet rs1 = stmt.executeQuery(sql1);
+            while(rs1.next()){
+				String hf = rs1.getString(4);
+				if(hf.equals(userpass)){
+					stmt.execute(h);
+				}else{
+					System.out.println("Incorrect password or user not found");
+					System.out.println("Please rerun thanks");
+					while(true){
+						
+					}
+				}
+			}
+			}
 		
-		while (true) {
-			Socket socket = server.accept();//Listening
-			invoke(socket);//If someone connects, create a new thread invoke to handle
-			
+		System.out.println("Welcome to Zhang Taifa's chat room Email: zhangtaifa123@outlook.com");
+
+		try (ServerSocket server = new ServerSocket(10001)) {
+			while (true) {
+				Socket socket = server.accept();//Listening
+				invoke(socket);//If someone connects, create a new thread invoke to handle	
+			}
 		}
 
 	}
-	
+
 	private static void invoke(final Socket client) throws IOException {
 		new Thread(new Runnable() {
 			public void run() {
@@ -30,32 +58,9 @@ public class Server {
 					out = new PrintWriter(client.getOutputStream());
 					
 					while (true) {
-						int throwsd = 1;
-						throwsd ++;
 						String msg = in.readLine();//Gets the string
-						InetAddress r = client.getInetAddress();
 						if (!msg.equals(null)) {//Check whether it is empty, and if it is empty, an error will be reported
-							System.out.println(msg+" from "+r);
-							try {
-								Class.forName("com.mysql.cj.jdbc.Driver");//Upload the information to the database
-								Connection con = DriverManager.getConnection(
-								"jdbc:mysql://localhost:3306/java", "root", "java");
-								Statement stmt = con.createStatement();
-								stmt.execute("SET SESSION sql_mode=NO_ZERO_IN_DATE;");
-								String tString = new String("insert into `java1` (`ip`,`msg`) values (");
-								StringBuffer stringBuffer = new StringBuffer(tString);
-								stringBuffer.append("'");
-								stringBuffer.append(r);
-								stringBuffer.append("'");
-								stringBuffer.append(",'");
-								stringBuffer.append(msg);
-								stringBuffer.append("');");
-								String dstString = new String(stringBuffer);
-								stmt.execute(dstString);
-								//System.out.println(rString);
-								//TODO
-							} catch (Exception e) {
-							}
+							System.out.println(msg);
 						} else {							
 						}
 					}
